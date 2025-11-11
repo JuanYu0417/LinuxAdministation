@@ -69,7 +69,7 @@ sudo systemctl reload nginx
 ### 7.Run the App with Gunicorn and systemd
 When I press Ctrl + C or close the terminal, the app stops, and my website becomes unreachable.I need it Runs continuously, restarts automatically, and doesn’t stop when you close the terminal.
 
-Create /etc/systemd/system/lemp-app.service:(https://github.com/JuanYu0417/LinuxAdministation/blob/main/withGunicorn%2Bsystemd.txt)
+Create /etc/systemd/system/lemp-app.service:[GunicornandSystemd](https://github.com/JuanYu0417/LinuxAdministation/blob/main/withGunicorn%2Bsystemd.txt)
 
 Start and enable the service:
 ```bash

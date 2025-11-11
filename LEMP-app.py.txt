@@ -1,5 +1,8 @@
 import mysql.connector
 from flask import Flask, render_template
+from zoneinfo import ZoneInfo  
+from datetime import datetime
+
 
 app = Flask(__name__)
 
@@ -18,7 +21,15 @@ def home():
     # Clean up
     cursor.close()
     conn.close()
-    return render_template('index.html', time=result[0])
+
+    utc_time = result[0].replace(tzinfo=ZoneInfo("UTC"))
+    local_time = utc_time.astimezone(ZoneInfo("Europe/Helsinki"))
+
+    return render_template('index.html', time=local_time.strftime('%Y-%m-%d %H:%M:%S'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
+
+
+
