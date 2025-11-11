@@ -1,25 +1,226 @@
 
-
 <!DOCTYPE html>
-<html>
+<html lang="fi">
 <head>
-    <title>Oma Projekti</title>
+    <meta charset="UTF-8">
+    <title>Finlandia Trophy Helsinki</title>
     <style>
         body {
-            font-family: Arial;
-            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #6a0dad, #8a2be2);
+            color: #fff;
             text-align: center;
-            padding-top: 50px;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            padding: 50px 20px;
         }
         h1 {
-            color: #0077cc;
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 20px;
+        }
+        img {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        h2 {
+            font-size: 36px;
+            margin-top: 40px;
+        }
+        /* Aikataulu layout */
+        .schedule {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .day {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            width: 280px;
+            text-align: left;
+        }
+        .day h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .day p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        /* Liput section */
+        .tickets {
+            margin-top: 40px;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #fff;
+            text-align: center;
+        }
+        th {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        footer {
+            margin-top: 50px;
+            font-size: 14px;
+            color: #f0f0f0;
+        }
+
+       footer img {
+            width: 200px;
+            height: auto;
+            display: block;
+            margin: 10px auto 0;
+       }
+
+       .buy-ticket a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffeb3b; //yellow
+            text-decoration: none;
+           font-size: 18px;
+           font-weight: 600;
+      }
+
+      .buy-ticket a:hover {
+           color: #fff176; 
+           text-decoration: underline;
+     }
+        .buy-ticket img {
+            width: 200px;
+            margin-top: 20px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <h1>Tervetuloa minun sivulle!</h1>
-    <p>Nykyinen aika: {{ time }}</p>
-    <p>LEMP-stack toimii onnistuneesti.</p>
+    <header>
+        <h1>Tervetuloa Finlandia Trophy Helsinki -kilpailuun!</h1>
+        <p>Helsingin jäähallissa 21.–22. 11. 2025.</p>
+        <p>Nykyinen aika: {{ time }}</p>
+        <img src="https://www.finlandiatrophy.com/wp-content/uploads/sites/5/2025/01/etusivun-kuva.jpg">
+
+        <!-- Aikataulu Section -->
+        <h2>Aikataulu</h2>
+        <div class="schedule">
+            <div class="day">
+                <h3>Torstai 20.11.2025</h3>
+                <p>9.45 A-ovi avautuu</p>
+                <p>10.00–16.05 Viralliset harjoitukset</p>
+            </div>
+            <div class="day">
+                <h3>Perjantai 21.11.2025</h3>
+                <p>12.30 A ja D ovet avautuvat</p>
+                <p>14.00 Parien lyhytohjelma</p>
+                <p>15.30 Miesten lyhytohjelma</p>
+                <p>17.25 Naisten lyhytohjelma</p>
+                <p>19.20 Jäätanssin rytmitanssi</p>
+            </div>
+            <div class="day">
+                <h3>Lauantai 22.11.2025</h3>
+                <p>11.00 A ja D ovet avautuvat</p>
+                <p>12.30 Parien vapaaohjelma</p>
+                <p>14.15 Miesten vapaaohjelma</p>
+                <p>Palkintojenjako: parit ja miehet</p>
+                <p>17.30 Naisten vapaaohjelma</p>
+                <p>19.40 Jäätanssin vapaatanssi</p>
+                <p>Palkintojenjako: naiset ja jäätanssi</p>
+            </div>
+        </div>
+        <p style="margin-top:20px; font-size:16px;">
+            A-ovi avautuu aina 15 minuuttia ennen ensimmäisen harjoituksen alkamista.
+        </p>
+
+        <!-- Liput Section -->
+        <h2>Liput</h2>
+        <div class="tickets">
+            <table>
+                <tr>
+                    <th>HARJOITUKSET</th>
+                    <th>KATEGORIA</th>
+                    <th>TORSTAI</th>
+                </tr>
+                <tr>
+                    <td>Kaikki</td>
+                    <td>Alakatsomo</td>
+                    <td>14 €</td>
+                </tr>
+            </table>
+
+            <table>
+                <tr>
+                    <th>PÄIVÄLIPUT</th>
+                    <th>KATEGORIA</th>
+                    <th>PERJANTAI</th>
+                    <th>LAUANTAI</th>
+                </tr>
+                <tr>
+                    <td>Aikuinen</td>
+                    <td>Alakatsomo</td>
+                    <td>54,60 €</td>
+                    <td>75,60 €</td>
+                </tr>
+                <tr>
+                    <td>Lapsi 4-15 v.</td>
+                    <td>Alakatsomo</td>
+                    <td>25,60 €</td>
+                    <td>33,60 €</td>
+                </tr>
+                <tr>
+                    <td>Opiskelija</td>
+                    <td>Alakatsomo</td>
+                    <td>45,10 €</td>
+                    <td>61,60 €</td>
+                </tr>
+                <tr>
+                    <td>Eläkeläinen</td>
+                    <td>Alakatsomo</td>
+                    <td>45,10 €</td>
+                    <td>61,60 €</td>
+                </tr>
+                <tr>
+                    <td>Kaikki</td>
+                    <td>Yläkatsomo</td>
+                    <td>36,60 €</td>
+                    <td>46,10 €</td>
+                </tr>
+            </table>
+
+            <!-- Katsomokartta -->
+              Katsomokartta:
+             <img src="https://www.finlandiatrophy.com/wp-content/uploads/sites/5/2025/08/Katsomokartta-FT25v3-1-1024x674.jpg">
+ 
+
+            <!-- Buy Ticket Button -->
+            <div class="buy-ticket">
+              <a href="https://www.lippu.fi/artist/finlandia-trophy/" target="_blank">
+              Osta liput:
+              <img src="https://www.finlandiatrophy.com/wp-content/uploads/sites/5/2024/06/lippu_fi_mc_pos.png" alt="Osta liput Lippu.fi:stä">
+              </a>
+            </div>
+        </div>
+    </header>
+    <footer>
+     Järjestäjät:
+       <img src="https://www.finlandiatrophy.com/wp-content/uploads/sites/5/2025/04/Skatingfinland_logo_nelio-300x300.png">
+    </footer>
 </body>
 </html>
-

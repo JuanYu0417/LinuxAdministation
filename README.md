@@ -77,10 +77,26 @@ sudo systemctl daemon-reload
 sudo systemctl enable lemp-app
 sudo systemctl start lemp-app
 ```
+
+### 8.Personlize the website page
+```bash
+cd templates
+sudo nano index.html
+```
+Now  personalized webpage is ready:[newPage](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Personalize%20HTML%20page.txt)
+
+Restart systemd:
+```bash
+source venv/bin/activate
+sudo systemctl restart lemp-app.service
+sudo systemctl status lemp-app.service
+```
+
 ## Access Information
 
 Web page: http://86.50.20.134:8080/
 
 ## Notes(somethings need be improved)
-1.Time zone
-2.website page personalizes
+1.Time zone(finished);
+
+2.website page personalizes(finished)
