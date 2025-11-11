@@ -1,0 +1,15 @@
+nit]
+Description=Gunicorn instance to serve Flask LEMP app
+After=network.target
+
+[Service]
+User=your_username
+Group=www-data
+WorkingDirectory=/home/your_username/lemp-app
+Environment="PATH=/home/your_username/lemp-app/venv/bin"
+ExecStart=/home/your_username/lemp-app/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:5000 app:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
