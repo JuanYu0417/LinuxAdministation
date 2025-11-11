@@ -1,0 +1,25 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Oma Projekti</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding-top: 50px;
+        }
+        h1 {
+            color: #0077cc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tervetuloa minun sivulle!</h1>
+    <p>Nykyinen aika: {{ time }}</p>
+    <p>LEMP-stack toimii onnistuneesti.</p>
+</body>
+</html>
+

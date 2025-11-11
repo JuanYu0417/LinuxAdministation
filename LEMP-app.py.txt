@@ -1,0 +1,24 @@
+import mysql.connector
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    # Connect to MariaDB
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="exampleuser",
+        password="change_this_strong_password",
+        database="exampledb"
+    )
+    cursor = conn.cursor()
+    cursor.execute("SELECT NOW()")
+    result = cursor.fetchone()
+    # Clean up
+    cursor.close()
+    conn.close()
+    return render_template('index.html', time=result[0])
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
