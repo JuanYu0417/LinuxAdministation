@@ -1,0 +1,54 @@
+import pandas as pd
+import yfinance as yf
+import mysql.connector
+from mysql.connector import Error
+
+# MySQL configuration
+DB_CONFIG = {
+    "host": "localhost",
+    "user": "root",  
+    "password": "",  
+    "database": "stockdb"  
+}
+
+# Read company list from CSV
+companies = pd.read_csv("omxh25_companies.csv")  # Ensure columns: name, symbol, industry
+tickers = companies['symbol'].tolist()
+
+try:
+    # Connect to MySQL
+    conn = mysql.connector.connect(**DB_CONFIG)
+    cursor = conn.cursor()
+
+    # Insert company info (update if exists)
+    for _, row in companies.iterrows():
+        cursor.execute("""
+            INSERT INTO company_info (name, symbol, industry, country)
+            VALUES (%s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE name=VALUES(name), industry=VALUES(industry)
+        """, (row['name'], row['symbol'], row['industry'], 'Finland'))
+
+    # Fetch and insert stock price data
+    for ticker in tickers:
+        print(f"Fetching data for {ticker}...")
+        stock = yf.Ticker(ticker)
+        hist = stock.history(start="2025-01-01", end="2025-11-16")
+        hist.reset_index(inplace=True)
+
+        for _, r in hist.iterrows():
+            cursor.execute("""
+                INSERT INTO stock_prices (symbol, date, open, high, low, close, volume)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (ticker, r['Date'].date(), r['Open'], r['High'], r['Low'], r['Close'], int(r['Volume'])))
+
+    # Commit changes
+    conn.commit()
+    print("✅ Data successfully inserted into MySQL")
+
+except Error as e:
+    print(f"❌ Database error: {e}")
+finally:
+    if cursor:
+        cursor.close()
+    if conn:
+        conn.close()

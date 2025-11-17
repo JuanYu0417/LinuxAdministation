@@ -1,0 +1,13 @@
+
+[Unit]
+Description=Streamlit Server
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/myapp
+ExecStart=/home/ubuntu/myapp/venv/bin/streamlit run /home/ubuntu/myapp/app.py --server.baseUrlPath=/data-analysis --server.address=0.0.0.0 --server.port=8501
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

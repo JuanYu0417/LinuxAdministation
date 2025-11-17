@@ -1,0 +1,44 @@
+
+import streamlit as st
+import pandas as pd
+import mysql.connector
+import plotly.express as px
+
+# Database config
+DB_CONFIG = {
+    "host":"localhost",
+    "user":"username",
+    "password":"password",
+    "database": "stockdb"
+}
+
+# Connect to MySQL and load company info
+def load_companies():
+    conn = mysql.connector.connect(**DB_CONFIG)
+    query = "SELECT id, name, symbol, industry, country, ytd_gain FROM company_info"
+    df = pd.read_sql(query, conn)
+    conn.close()
+    return df
+
+# Load stock prices for a given symbol
+def load_stock_prices(symbol):
+    conn = mysql.connector.connect(**DB_CONFIG)
+    query = f"SELECT date, close FROM stock_prices WHERE symbol='{symbol}' ORDER BY date"
+    df = pd.read_sql(query, conn)
+    conn.close()
+    return df
+
+# Streamlit UI
+st.title("OMXH25: Yhtiöiden tilannekatsaus vuonna 2025")
+
+companies = load_companies()
+st.subheader("Company List")
+st.dataframe(companies)
+
+selected_company = st.selectbox("Select a company to view stock chart:", companies['symbol'])
+
+if selected_company:
+    st.write(f"Showing stock price trend for: {selected_company}")
+    prices = load_stock_prices(selected_company)
+    fig = px.line(prices, x='date', y='close', title=f"{selected_company} Stock Price Trend (2025)")
+    st.plotly_chart(fig)
