@@ -113,78 +113,78 @@ Nginx is a reverse proxy and web server that can handle multiple paths simultane
 
 At first of all, I should release :80 port from apache2.
 1. Stop and Disable Apache Service
-´´´bash
+```bash
 sudo systemctl stop apache2
 sudo systemctl disable apache2
-´´´
+```
 2. Verify Port Release
-´´´bash
+```bash
 sudo lsof -i :80
-´´´
+```
 3. Make sure Nginx is installed and start the service:
-´´´bash
+```bash
 sudo systemctl start nginx
-´´´
+```
 ## Preparing the enviroment
 1. log in to my CSC cPouta VPS and add new rules:Add 8501 port;
 2. Create and activate a virtual environment:
-´´´bash
+```bash
 python3 -m venv venv
 source venv/bin/activate
-´´´
+```
 3. create myapp
-´´´bash
+```bash
 sudo nano myapp.py
-´´´
+```
 Then add Streamlit-Nginx as ReverseProxy:[myapp](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Streamlit_programme/Add-Streamlit-Nginx-as-ReverseProxy.txt)
 
 4.Run the App with Gunicorn and systemdc
-´´´bash
+```bash
 sudo systemctl daemon-reload
 sudo systemctl enable streamlit
 sudo systemctl start streamlit
 sudo systemctl status streamlit
-´´´
+```
 ## Set up and run Streamlit following guide
 1.install required package
-´´´bash
+```bash
 pip install streamlit pandas plotly mysqlclient
-´´´
+```
 2.Run Streamlit As A Service:
-´´´bash
+```bash
 sudo nano /etc/systemd/system/streamlit.service
-´´´
+```
 [StramlitService](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Streamlit_programme/RunStreamlitAsAServiceNew.txt)
 
 3.Configure Streamlit for subpath by creating .streamlit/config.toml
-´´´bash
+```bash
 [server]
 port = 8501
 address = "127.0.0.1"
 baseUrlPath = "/data-analysis"
 enableCORS = false
 enableXsrfProtection = false
-´´´
+```
 4.then 
-´´´bash
+```bash
 sudo systemctl daemon-reload
 sudo systemctl enable streamlit
 sudo systemctl start streamlit
 sudo systemctl status streamlit
-´´´
+```
 5.create Streamlit page:[Stramlitpage](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Streamlit_programme/RunStreamlitAsAServiceNew.txt)
 
 ## create database and use it
 1.create database stockdb
-´´´bash
+```bash
 sudo mysql -u root -p
 SHOW DATABASES;
 CREATE DATABASE stockdb;
 USE stockdb;
-´´´
+```
 
-2.create tables company_info and stock_prices
-´´´bash
+2.create table company_info 
+```bash
 
 CREATE TABLE company_info (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -196,9 +196,9 @@ CREATE TABLE company_info (
     description TEXT
 );
 
-´´´ 
-and 
-´´´bash
+```   
+create table stock_prices  
+```bash
 
 
 CREATE TABLE stock_prices (
@@ -211,10 +211,10 @@ CREATE TABLE stock_prices (
     close DECIMAL(10,2),
     volume BIGINT
 );
-´´´ 
+``` 
 3.CSV from windows to ubuntu and update database to mysql:
 
-´´´bash
+```bash
 cd myapp
 sudo nano omxh25_companies.csv
 sudo mysql
@@ -228,7 +228,7 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (name, symbol, industry, country, ytd_gain, description);
 
-´´´
+```
 
 4.fetch prices from yfinance using Python. I tried many times and used Copilot code:[Fetch:prices](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Streamlit_programme/fetch_price.csv.txt)
 
