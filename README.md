@@ -100,3 +100,139 @@ Web page: http://86.50.20.134:8080/
 1.Time zone(finished);
 
 2.website page personalizes(finished)
+
+# Adding Streamlit to LEMP Stack and Configuring Nginx Reverse Proxy
+
+## What is Streamlit,plotly and pandas?
+- Streamlit: an open-source Python framework for data scientists and AI/ML engineers to deliver interactive data apps – in only a few - lines of code.
+- Pandas: Cleaning, transforming, and analyzing datasets efficiently.
+- Plotly: Creating interactive charts and visualizations.
+
+##I used "listen 80" in viikotehtävä 1. How can I deal with the port 80?
+Nginx is a reverse proxy and web server that can handle multiple paths simultaneously. listen 80 means Nginx continues to listen on the standard HTTP port. As long as I keep the existing location / or root pointing to my  original web directory in the Nginx configuration, the original page will remain accessible.
+
+At first of all, I should release :80 port from apache2.
+1. Stop and Disable Apache Service
+´´´bash
+sudo systemctl stop apache2
+sudo systemctl disable apache2
+´´´
+2. Verify Port Release
+´´´bash
+sudo lsof -i :80
+´´´
+3. Make sure Nginx is installed and start the service:
+´´´bash
+sudo systemctl start nginx
+´´´
+## Preparing the enviroment
+1. log in to my CSC cPouta VPS and add new rules:Add 8501 port;
+2. Create and activate a virtual environment:
+´´´bash
+python3 -m venv venv
+source venv/bin/activate
+´´´
+3. create myapp
+´´´bash
+sudo nano myapp.py
+´´´
+Then add Streamlit-Nginx as ReverseProxy:[myapp](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Streamlit_programme/Add-Streamlit-Nginx-as-ReverseProxy.txt)
+
+4.Run the App with Gunicorn and systemdc
+´´´bash
+sudo systemctl daemon-reload
+sudo systemctl enable streamlit
+sudo systemctl start streamlit
+sudo systemctl status streamlit
+´´´
+## Set up and run Streamlit following guide
+1.install required package
+´´´bash
+pip install streamlit pandas plotly mysqlclient
+´´´
+2.Run Streamlit As A Service:
+´´´bash
+sudo nano /etc/systemd/system/streamlit.service
+´´´
+[StramlitService](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Streamlit_programme/RunStreamlitAsAServiceNew.txt)
+
+3.Configure Streamlit for subpath by creating .streamlit/config.toml
+´´´bash
+[server]
+port = 8501
+address = "127.0.0.1"
+baseUrlPath = "/data-analysis"
+enableCORS = false
+enableXsrfProtection = false
+´´´
+4.then 
+´´´bash
+sudo systemctl daemon-reload
+sudo systemctl enable streamlit
+sudo systemctl start streamlit
+sudo systemctl status streamlit
+´´´
+5.create Streamlit page:[Stramlitpage](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Streamlit_programme/RunStreamlitAsAServiceNew.txt)
+
+## create database and use it
+1.create database stockdb
+´´´bash
+sudo mysql -u root -p
+SHOW DATABASES;
+CREATE DATABASE stockdb;
+USE stockdb;
+´´´
+
+2.create tables company_info and stock_prices
+´´´bash
+
+CREATE TABLE company_info (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    symbol VARCHAR(10) NOT NULL,
+    industry VARCHAR(50) NOT NULL,
+    country VARCHAR(50) DEFAULT 'Finland',
+    ytd_gain DECIMAL(6,2),
+    description TEXT
+);
+
+´´´ 
+and 
+´´´bash
+
+
+CREATE TABLE stock_prices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    symbol VARCHAR(10) NOT NULL,
+    date DATE NOT NULL,
+    open DECIMAL(10,2),
+    high DECIMAL(10,2),
+    low DECIMAL(10,2),
+    close DECIMAL(10,2),
+    volume BIGINT
+);
+´´´ 
+3.CSV from windows to ubuntu and update database to mysql:
+
+´´´bash
+cd myapp
+sudo nano omxh25_companies.csv
+sudo mysql
+use stockdb
+
+LOAD DATA INFILE ' /home/ubuntu/myapp/omxh25_companies.csv'
+INTO TABLE company_info
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(name, symbol, industry, country, ytd_gain, description);
+
+´´´
+
+4.fetch prices from yfinance using Python. I tried many times and used Copilot code:[Fetch:prices](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Streamlit_programme/fetch_price.csv.txt)
+
+## Access Information
+
+Web page: http://86.50.20.134
+
