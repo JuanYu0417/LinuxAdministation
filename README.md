@@ -1,8 +1,8 @@
-# LEMP Stack Deployment Example – Flask + MySQL + Nginx
+# LEMP Stack Deployment Example – Flask + Mariadb + Nginx
 
 ## Project Overview
 
-This project demonstrates the deployment of a Python web application on a LEMP stack (Linux, Nginx, MariaDB, Python) hosted on CSC's cPouta cloud service. The application uses Flask as the backend framework, MySQL as the database, and Nginx as a reverse proxy. The web page displays the current time retrieved from the SQL server and includes personalized content.
+This project demonstrates the deployment of a Python web application on a LEMP stack (Linux, Nginx, MariaDB, Python) hosted on CSC's cPouta cloud service. The application uses Flask as the backend framework, MariaDB as the database, and Nginx as a reverse proxy. The web page displays the current time retrieved from the SQL server and includes personalized content.
 
 ## Technology Stack
 - Linux (Ubuntu)
