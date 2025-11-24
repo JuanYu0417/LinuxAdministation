@@ -1,8 +1,12 @@
-
 import streamlit as st
 import pandas as pd
 import mysql.connector
 import plotly.express as px
+import requests
+import os
+import time
+import pytz
+from datetime import datetime
 
 # Database config
 DB_CONFIG = {
@@ -11,6 +15,26 @@ DB_CONFIG = {
     "password":"password",
     "database": "stockdb"
 }
+
+tz = pytz.timezone('Europe/Helsinki')
+
+#Extra api
+st.sidebar.header("Helsinki Weather")
+try:
+    weather_url = "https://api.open-meteo.com/v1/forecast?latitude=60.17&longitude=24.94&current_weather=true"
+    response = requests.get(weather_url, timeout=5)
+    if response.status_code == 200:
+        weather_data = response.json()['current_weather']
+        temp = weather_data['temperature']
+        wind = weather_data['windspeed']
+        st.sidebar.metric("Temperature", f"{temp} °C")
+        st.sidebar.metric("Wind Speed", f"{wind} km/h")
+    else:
+        st.sidebar.write("Weather unavailable")
+except Exception as e:
+    st.sidebar.write("Weather Error")
+
+st.write(f"Current Time: {datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')}")
 
 # Connect to MySQL and load company info
 def load_companies():
@@ -30,6 +54,31 @@ def load_stock_prices(symbol):
 
 # Streamlit UI
 st.title("OMXH25: Yhtiöiden tilannekatsaus vuonna 2025")
+
+data_file = 'cron_log.txt'
+if os.path.exists(data_file):
+    file_ts = os.path.getmtime(data_file)
+    file_dt = datetime.fromtimestamp(file_ts, tz)
+    st.write(f"Update: {file_dt.strftime('%Y-%m-%d %H:%M:%S')}")
+else:
+    st.write("Update: Never")
+
+
+try:
+    companies = load_companies()
+    st.subheader("Company List")
+    st.dataframe(companies)
+
+    selected_company = st.selectbox("Select a company to view stock chart:", companies['symbol'])
+
+    if selected_company:
+        st.write(f"Showing stock price trend for: {selected_company}")
+        prices = load_stock_prices(selected_company)
+        fig = px.line(prices, x='date', y='close', title=f"{selected_company} Stock Price Trend (2025)")
+        st.plotly_chart(fig)
+
+except Exception as e:
+    st.error(f"Database connection error: {e}")
 
 companies = load_companies()
 st.subheader("Company List")

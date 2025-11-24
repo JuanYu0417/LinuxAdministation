@@ -108,7 +108,7 @@ Web page: http://86.50.20.134:8080/
 - Pandas: Cleaning, transforming, and analyzing datasets efficiently.
 - Plotly: Creating interactive charts and visualizations.
 
-##I used "listen 80" in viikotehtävä 1. How can I deal with the port 80?
+## I used "listen 80" in viikotehtävä 1. How can I deal with the port 80?
 Nginx is a reverse proxy and web server that can handle multiple paths simultaneously. listen 80 means Nginx continues to listen on the standard HTTP port. As long as I keep the existing location / or root pointing to my  original web directory in the Nginx configuration, the original page will remain accessible.
 
 At first of all, I should release :80 port from apache2.
@@ -235,4 +235,80 @@ IGNORE 1 ROWS
 ## Access Information
 
 Web page: http://86.50.20.134
+
+
+# Cron + API + MySQL + Streamlit
+## Modify database table:stock-prices.
+```bash
+sudo mysql
+USE stockdb;
+ALTER TABLE stock_prices MODIFY date DATETIME NOT NULL;
+```  
+The database is now able to precisely store timestamps (YYYY-MM-DD HH:MM:SS), and is ready for the upcoming 15-minute Cron updates.
+## modify fetch_prices.py  
+Modified the script to fetch the latest data snapshot using** period="1d" ** instead of a historical date range.   
+Implemented ** datetime.now()  ** to insert the precise execution timestamp into the database.  
+[Fetch:prices](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Streamlit_programme/fetch_price.csv.txt)
+
+
+## Cron every 15min
+### What is Cron?
+Cron is a time-based job scheduler in Unix-like operating systems that automates repetitive tasks by running commands at specified intervals. These automated tasks are called "cron jobs" and are defined in a file called a **crontab**.   
+Cron jobs are used for tasks like system maintenance, running backups, and processing data, and are configured using a specific syntax with five fields for minute, hour, day of the month, month, and day of the week. 
+A common format includes five fields for time, followed by the command to run:
+* * * * * /path/to/command
+
+### configure Cron:  
+```bash
+crontab -e
+*/15 * * * * /home/ubuntu/myapp/venv/bin/python /home/ubuntu/myapp/fetch_prices.py >> /home/ubuntu/myapp/cron_log.txt 2>&1
+crontab -l
+```  
+Then test:  
+```bash
+/home/ubuntu/myapp/venv/bin/python /home/ubuntu/myapp/fetch_prices.py >> /home/ubuntu/myapp/cron_log.txt 2>&1
+cat /home/ubuntu/myapp/cron_log.txt
+```  
+### Add "Currect time" and "Update time"
+
+```Python
+import os
+import time
+import pytz
+from datetime import datetime
+
+tz = pytz.timezone('Europe/Helsinki')
+
+st.write(f"Current Time: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+data_file = 'cron_log.txt' 
+if os.path.exists(data_file):
+    file_ts = os.path.getmtime(data_file)
+    file_dt = datetime.fromtimestamp(file_ts, tz)
+    st.write(f"Update: {file_dt.strftime('%Y-%m-%d %H:%M:%S')}")
+else:
+    st.write("Update: Never")
+```
+
+### Extra Api (Helsinki Weather)
+
+```bash
+nano /home/ubuntu/myapp/run_cron.sh
+``` 
+```bash
+
+PROJECT_DIR="/home/ubuntu/myapp"
+VENV_DIR="$PROJECT_DIR/venv"
+
+cd $PROJECT_DIR
+
+source $VENV_DIR/bin/activate
+
+python fetch_prices.py
+
+echo "Cron run finished at $(date)"
+``` 
+```bash
+chmod +x /home/ubuntu/myapp/run_cron.sh
+``` 
+update app.py:[app.py](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Streamlit_programme/createStreamlitPage.txt)
 
