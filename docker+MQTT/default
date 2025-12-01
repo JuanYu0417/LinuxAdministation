@@ -1,0 +1,49 @@
+server {
+    listen 80;
+    server_name _;
+
+    # Global root directory (for the homepage)
+    root /var/www/html;
+    index index.html;
+
+    # --- Old Assignment: Streamlit Data Analysis ---
+    # Note: Using /data-analysis as specified in your files
+    location /data-analysis {
+        proxy_pass http://127.0.0.1:8501;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # --- Homepage Default Rule ---
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # --- New Assignment: Chat Room Page ---
+    location /chat {
+        alias /var/www/html/chat;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # --- New Assignment: MQTT WebSocket ---
+    location /mqtt {
+        proxy_pass http://127.0.0.1:9001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+    }
+
+    # --- New Assignment: Python API Backend ---
+    location /api/ {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
