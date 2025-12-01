@@ -338,13 +338,7 @@ Problem 1:404 Not Found
 sudo nginx -t
 ```
 ** 2025/12/01 17:28:37 [warn] 308754#308754: conflicting server name "_" on 0.0.0.0:80, ignored **
-Modify  /etc/nginx/sites-available/default[default](https://github.com/JuanYu0417/LinuxAdministation/blob/main/docker%2BMQTT/default),let Nginx configuration act as a unified entry point, utilizing port 80 to distribute incoming client requests to various backend destinations based on the URL path:
-Path,Destination,Purpose
-/,/var/www/html (Static Files),"Serves the website's homepage (e.g., index.html) from the root static directory."
-/data-analysis,http://127.0.0.1:8501,Proxies requests to the Streamlit data analysis application.
-/chat,/var/www/html/chat (Static Files),Serves the chat room's static web resources and is configured to support client-side routing (SPA).
-/mqtt,http://127.0.0.1:9001,Upgrades the connection to WebSocket and proxies to the MQTT message broker for real-time communication.
-/api/,http://127.0.0.1:5000,"Proxies requests to the Python API backend service for handling data transactions (e.g., retrieving historical messages)."
+Modify  /etc/nginx/sites-available/default[default](https://github.com/JuanYu0417/LinuxAdministation/blob/main/docker%2BMQTT/default),let Nginx configuration act as a unified entry point, utilizing port 80 to distribute incoming client requests to various backend destinations based on the URL path
 
 Problem 2:Not Found
 The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
