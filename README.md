@@ -312,3 +312,46 @@ chmod +x /home/ubuntu/myapp/run_cron.sh
 ``` 
 update app.py:[app.py](https://github.com/JuanYu0417/LinuxAdministation/blob/main/Streamlit_programme/createStreamlitPage.txt)
 
+# Docker container+MQTT
+## Docker VS virtual machine
+Docker is a platform designed to help developers build, share, and run container applications.  
+VMs run independent OS kernels; Docker shares the host's kernel.VMs are heavy and take minutes to start; Docker is lightweight and starts in seconds.
+## What is MQTT?
+MQTT (Message Queuing Telemetry Transport) is a very lightweight messaging protocol used to send data between devices.
+## Prerequisites
+### Add port 1883,9001(TCP)
+### install docker
+```bash
+sudo apt update
+sudo apt install docker.io docker-compose-plugin
+sudo docker-compose up -d --build
+sudo docker-compose ps
+```  
+### create Python-skripti
+```bash
+sudo apt install python3-paho-mqtt
+ ```
+
+### test
+Problem 1:404 Not Found
+```bash
+sudo nginx -t
+```
+** 2025/12/01 17:28:37 [warn] 308754#308754: conflicting server name "_" on 0.0.0.0:80, ignored **
+Modify  /etc/nginx/sites-available/default[default](https://github.com/JuanYu0417/LinuxAdministation/blob/main/docker%2BMQTT/default),let Nginx configuration act as a unified entry point, utilizing port 80 to distribute incoming client requests to various backend destinations based on the URL path:
+Path,Destination,Purpose
+/,/var/www/html (Static Files),"Serves the website's homepage (e.g., index.html) from the root static directory."
+/data-analysis,http://127.0.0.1:8501,Proxies requests to the Streamlit data analysis application.
+/chat,/var/www/html/chat (Static Files),Serves the chat room's static web resources and is configured to support client-side routing (SPA).
+/mqtt,http://127.0.0.1:9001,Upgrades the connection to WebSocket and proxies to the MQTT message broker for real-time communication.
+/api/,http://127.0.0.1:5000,"Proxies requests to the Python API backend service for handling data transactions (e.g., retrieving historical messages)."
+
+Problem 2:Not Found
+The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+```bash
+sudo ss -lptn 'sport = :5000'
+ps -ef |grep python3
+sudo pkill -f gunicorn
+sudo ss -tlnp | grep 5000
+```
+
