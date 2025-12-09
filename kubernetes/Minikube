@@ -1,0 +1,63 @@
+# Minikube - Local Kubernetes
+Minikube is a tool that enables running a Kubernetes cluster locally for development and testing. It creates a single-node cluster within a virtual machine or a container.
+
+## Minikube Installation
+```bash
+# Download Minikube
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+# Install
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+# Check installation
+minikube version
+
+# Install kubectl (Kubernetes CLI)
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# Check kubectl
+kubectl version --client
+```  
+## Minikube Startup
+Cluster Startup
+```bash
+# Start Minikube (uses the Docker driver)
+minikube start
+
+# Add usr to docker(when fail to start)
+sudo usermod -aG docker $USER
+
+# Refresh usr group
+newgrp docker
+
+# test 
+docker ps
+
+# Start with a specific driver
+minikube start --driver=docker
+
+# Start with more resources
+minikube start --cpus=4 --memory=8192
+
+# Check cluster status
+minikube status
+
+# Show cluster info
+kubectl cluster-info
+
+# Show nodes
+kubectl get nodes
+
+# Open Kubernetes Dashboard
+minikube dashboard
+
+# Stop Minikube
+minikube stop
+
+# Delete cluster
+minikube delete
+
+Tip: Minikube requires virtualization support (VT-x/AMD-v) or Docker containers. Ensure they are enabled/in use.
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+```

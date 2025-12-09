@@ -348,4 +348,56 @@ ps -ef |grep python3
 sudo pkill -f gunicorn
 sudo ss -tlnp | grep 5000
 ```
+# Kubernetes
+## What is kubernetes?
+Also known as K8s, is an open-source container orchestration system for automating the deployment, scaling, and management of containerized applications. 
+## Problem 1:port conflict
+When I use " kubectl port-forward service/backend 5000:5000",it fails.
+Detect port usage and find out which programme is running in port 5000,then decide kill it or not.
+```bash
+ss -tuln | grep 5000
+sudo ss -lptn 'sport = :5000'
+ps -fp 309110
+```
+result:port is belonging to the mqtt-chat project, and need to use it.
 
+```bash
+# Forward local port 5001 to port 5000 in the K8s container
+kubectl port-forward service/backend 5001:5000
+
+sudo nginx -t
+sudo systemctl reload nginx
+```  
+After several failed attempts to resolve this, assigning a dedicated port (e.g., 5001) proved to be the more practical approach.
+
+## Problem 2:low total memory 
+when I input
+```bash
+# Start with more resources
+minikube start --cpus=4 --memory=8192
+
+# result
+X Exiting due to RSRC_OVER_ALLOC_MEM: Requested memory allocation 8192MB is more than your system limit 7750MB.
+* Suggestion: Start minikube with less memory allocated: 'minikube start --memory=3072mb'
+
+# solution
+minikube start --cpus=4 --memory=5120
+```
+## Initialize Database "Error: Failed to fetch"
+
+```bash
+# Point local Docker CLI to Minikube's Docker daemon
+eval $(minikube docker-env)
+
+# Build the frontend image using the custom Dockerfile
+docker build -t frontend:latest -f frontend-Dockerfile .
+
+# Restart the deployment to apply the newly built image
+kubectl rollout restart deployment/frontend
+
+# Kill any existing port-forward processes to free the port
+pkill -f "kubectl port-forward"
+
+# Start port forwarding in the background allowing external access
+nohup kubectl port-forward svc/frontend 8080:80 --address 0.0.0.0 > pf.log 2>&1 &
+```
